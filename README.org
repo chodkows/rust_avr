@@ -1,0 +1,82 @@
+#+title: Readme
+#+AUTHOR: Wojciech Chodkowski
+
+#+begin_src toml :tangle cargo.toml
+[package]
+name = "blink"
+version = "0.1.0"
+authors = ["chodkows"]
+edition = '2018'
+
+[dependencies]
+ruduino = {  git = "https://github.com/avr-rust/ruduino", branch = "master" }
+
+[profile.release]
+lto = true
+#+end_src
+
+#+begin_src toml :tangle .cargo/config
+[build]
+target = "avr-atmega328p.json"
+
+[unstable]
+build-std = ["core"]
+
+# Cargo versions before 2021-02-23 won't recognize this: https://github.com/rust-lang/cargo/pull/9175
+[env]
+AVR_CPU_FREQUENCY_HZ = "16_000_000"
+#+end_src
+
+#+begin_src json :tangle avr-atmega328p.json
+{
+  "arch": "avr",
+  "cpu": "atmega328p",
+  "data-layout": "e-P1-p:16:8-i8:8-i16:8-i32:8-i64:8-f32:8-f64:8-n8-a:8",
+  "env": "",
+  "executables": true,
+  "linker": "avr-gcc",
+  "linker-flavor": "gcc",
+  "linker-is-gnu": true,
+  "llvm-target": "avr-unknown-unknown",
+  "os": "unknown",
+  "position-independent-executables": false,
+  "exe-suffix": ".elf",
+  "eh-frame-header": false,
+  "pre-link-args": {
+    "gcc": ["-mmcu=atmega328p"]
+  },
+  "late-link-args": {
+    "gcc": ["-lgcc", "-lc"]
+  },
+  "target-c-int-width": "16",
+  "target-endian": "little",
+  "target-pointer-width": "16",
+  "vendor": "unknown"
+}
+#+end_src
+
+#+begin_src rust :tangle ./src/main.rs
+#![no_std]
+#![no_main]
+
+use ruduino::Pin;
+use ruduino::cores::current::{port};
+
+#[no_mangle]
+pub extern fn main() {
+    port::D6::set_output();
+    port::D6::set_high();
+
+    port::D7::set_output();
+    port::B0::set_output();
+
+    loop {
+        port::D7::set_low();
+        port::B0::set_high();
+        ruduino::delay::delay_ms(3000);
+        port::D7::set_high();
+        port::B0::set_low();
+        ruduino::delay::delay_ms(1000);
+    }
+}
+#+end_src
