@@ -1,7 +1,13 @@
-#+title: Readme
+#+title: Rust with arduino
 #+AUTHOR: Wojciech Chodkowski
+.gitignore
+#+begin_src bash :tangle .gitignore
+Cargo.lock
+target/
+#+end_src
 
-#+begin_src toml :tangle cargo.toml
+Cargo.toml
+#+begin_src toml :tangle Cargo.toml
 [package]
 name = "blink"
 version = "0.1.0"
@@ -15,6 +21,7 @@ ruduino = {  git = "https://github.com/avr-rust/ruduino", branch = "master" }
 lto = true
 #+end_src
 
+.cargo/config
 #+begin_src toml :tangle .cargo/config
 [build]
 target = "avr-atmega328p.json"
@@ -27,6 +34,7 @@ build-std = ["core"]
 AVR_CPU_FREQUENCY_HZ = "16_000_000"
 #+end_src
 
+avr-atmega328p.json
 #+begin_src json :tangle avr-atmega328p.json
 {
   "arch": "avr",
@@ -56,6 +64,7 @@ AVR_CPU_FREQUENCY_HZ = "16_000_000"
 #+end_src
 
 
+./src/main.rs
 #+begin_src rust :tangle ./src/main.rs
 #![no_std]
 #![no_main]
